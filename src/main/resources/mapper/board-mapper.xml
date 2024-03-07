@@ -5,8 +5,8 @@
 <mapper namespace="Board">
 
     <insert id="save" parameterType="board" useGeneratedKeys="true" keyProperty="id">
-        insert into board_table(boardTitle, boardWriter, boardPass, boardContents)
-        values(#{boardTitle}, #{boardWriter}, #{boardPass}, #{boardContents})
+        insert into board_table(boardTitle, boardWriter, boardPass, boardContents, fileAttached)
+        values(#{boardTitle}, #{boardWriter}, #{boardPass}, #{boardContents}, #{fileAttached})
     </insert>
 
     <select id="findAll" resultType="board">
@@ -32,7 +32,6 @@
         delete from board_table where id=#{id}
     </delete>
 
-    <!--
     <insert id="saveFile" parameterType="boardFile">
         insert into board_file_table(originalFileName, storedFileName, boardId)
         values (#{originalFileName}, #{storedFileName}, #{boardId})
@@ -41,5 +40,5 @@
     <select id="findFile" parameterType="Long" resultType="boardFile">
         select * from board_file_table where boardId = #{id}
     </select>
-    -->
+
 </mapper>

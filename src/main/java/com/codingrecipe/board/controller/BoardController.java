@@ -1,6 +1,7 @@
 package com.codingrecipe.board.controller;
 
 import com.codingrecipe.board.dto.BoardDTO;
+import com.codingrecipe.board.dto.BoardFileDTO;
 import com.codingrecipe.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -26,7 +28,7 @@ public class BoardController {
     }
 
     @PostMapping("/save")
-    public String save(BoardDTO boardDTO){
+    public String save(BoardDTO boardDTO) throws IOException {
 
         System.out.println("boardDTO = " + boardDTO);
         boardService.save(boardDTO);
@@ -53,6 +55,11 @@ public class BoardController {
         BoardDTO boardDTO = boardService.findById(id);
         System.out.println("boardDTO = " + boardDTO);
         model.addAttribute("board", boardDTO);
+
+        if (boardDTO.getFileAttached() == 1) {
+            List<BoardFileDTO> boardFileDTOList = boardService.findFile(id);
+            model.addAttribute("boardFileList", boardFileDTOList);
+        }
 
         return "detail";
     }
