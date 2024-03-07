@@ -67,4 +67,15 @@ create table board_file_table
     boardId bigint,
     constraint fk_board_file foreign key(boardId) references board_table(id) on delete cascade
 );
+
+-- comment_table
+drop table if exists comment_table;
+create table comment_table(
+    id bigint primary key auto_increment,
+    commentWriter varchar(50),
+    commentContents varchar(200),
+    boardId bigint,
+    commentCreatedTime datetime default now(),
+    constraint fk_comment_table foreign key (boardId) references board_table(id) on delete cascade
+);
 ```
