@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button onclick="saveReq()">글작성</button>
+
+<table>
+    <tr>
+        <th>id</th>
+        <th>title</th>
+        <th>writer</th>
+        <th>date</th>
+        <th>hits</th>
+    </tr>
+    <tr th:each="board: ${pagingList}">
+        <td th:text="${board.id}"></td>
+        <td>
+            <a th:text="${board.boardTitle}" th:href="@{|/board/${board.id}?page=${paging.page}|}"></a>
+        </td>
+        <td th:text="${board.boardWriter}"></td>
+        <td th:text="${board.createdAt}"></td>
+        <td th:text="${board.boardHits}"></td>
+    </tr>
+</table>
+<!-- 첫번째 페이지로 이동 -->
+<!-- /board/paging?page=1 -->
+<a th:href="@{/board/paging?page=1}">First</a>
+<!-- 이전 링크 활성화 비활성화 -->
+<a th:href="${paging.page <= 1} ? '#' : @{|/board/paging?page=${paging.page - 1}|}">prev</a>
+
+
+<!-- 페이지 번호 링크(현재 페이지는 숫자만) -->
+<span th:each="page: ${#numbers.sequence(paging.startPage, paging.endPage)}">
+<!-- 현재페이지는 링크 없이 숫자만 -->
+    <span th:if="${page == paging.page}" th:text="${page}"></span>
+    <!-- 현재페이지 번호가 아닌 다른 페이지번호에는 링크를 보여줌 -->
+    <span th:unless="${page == paging.page}">
+        <a th:href="@{|/board/paging?page=${page}|}" th:text="${page}"></a>
+    </span>
+</span>
+
+<!-- 다음 링크 활성화 비활성화 -->
+<a th:href="${paging.page == paging.maxPage} ? '#' : @{|/board/paging?page=${paging.page + 1}|}">next</a>
+<!-- 마지막 페이지로 이동 -->
+<a th:href="@{|/board/paging?page=${paging.maxPage}|}">Last</a>
+
+</body>
+<script>
+    const saveReq = () => {
+        location.href = "/board/save";
+    }
+
+</script>
+</html>

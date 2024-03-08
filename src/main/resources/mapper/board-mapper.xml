@@ -41,4 +41,12 @@
         select * from board_file_table where boardId = #{id}
     </select>
 
+    <select id="paging" parameterType="java.util.HashMap" resultType="board">
+        select id, boardTitle, boardWriter, boardHits, date_format(createdAt, "%Y-%m-%d") as createdAt
+        from board_table order by id desc limit #{start}, #{limit}
+    </select>
+
+    <select id="boardCount" resultType="Integer">
+        select count(id) as boardCount from board_table
+    </select>
 </mapper>

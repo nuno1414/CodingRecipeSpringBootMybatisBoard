@@ -7,6 +7,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -50,5 +51,15 @@ public class BoardRepository {
     public List<BoardFileDTO> findFile(Long id) {
 
         return sql.selectList("Board.findFile", id);
+    }
+
+    public List<BoardDTO> pagingList(Map<String, Integer> pageParams) {
+
+        return sql.selectList("Board.paging", pageParams);
+    }
+
+    public int boardCount() {
+
+        return sql.selectOne("Board.boardCount");
     }
 }

@@ -52,7 +52,8 @@
 </body>
 <script th:inline="javascript">
     const listReq = () => {
-        location.href = "/board/list";
+        const page = [[${page}]]
+        location.href = "/board/paging?page=" + page;
     }
     const updateReq = () => {
         location.href = `/board/update/[[${board.id}]]`;

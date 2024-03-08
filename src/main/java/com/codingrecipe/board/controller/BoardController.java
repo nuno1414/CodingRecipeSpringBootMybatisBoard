@@ -2,14 +2,12 @@ package com.codingrecipe.board.controller;
 
 import com.codingrecipe.board.dto.BoardDTO;
 import com.codingrecipe.board.dto.BoardFileDTO;
+import com.codingrecipe.board.dto.PageDTO;
 import com.codingrecipe.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,7 +31,7 @@ public class BoardController {
         System.out.println("boardDTO = " + boardDTO);
         boardService.save(boardDTO);
 
-        return "redirect:/board/list";
+        return "redirect:/board/paging";
     }
 
     @GetMapping("/list")
@@ -47,7 +45,9 @@ public class BoardController {
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable("id") Long id, Model model) {
+    public String findById(@PathVariable("id") Long id,
+                           @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                           Model model) {
 
         // 조회수 처리
         boardService.updateHits(id);
@@ -60,6 +60,7 @@ public class BoardController {
             List<BoardFileDTO> boardFileDTOList = boardService.findFile(id);
             model.addAttribute("boardFileList", boardFileDTOList);
         }
+        model.addAttribute("page", page);
 
         return "detail";
     }
@@ -90,5 +91,20 @@ public class BoardController {
         boardService.delete(id);
 
         return "redirect:/boarc/list";
+    }
+
+    @GetMapping("/paging")
+    public String paging(Model model,
+                         @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+
+        // 해당 페이지어서 보여줄 글 목록
+        List<BoardDTO> pagingList = boardService.pagingList(page);
+        System.out.println("pagingList = " + pagingList);
+        model.addAttribute("pagingList", pagingList);
+
+        PageDTO pageDTO = boardService.pagingParam(page);
+        model.addAttribute("paging", pageDTO);
+
+        return "paging";
     }
 }
