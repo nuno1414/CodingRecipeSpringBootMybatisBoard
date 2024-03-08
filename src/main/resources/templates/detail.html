@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>detail</title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+</head>
     <style>
         table, tr, td, th {
             border: 1px solid black;
@@ -49,6 +51,30 @@
 <button onclick="listReq()">목록</button>
 <button onclick="updateReq()">수정</button>
 <button onclick="deleteReq()">삭제</button>
+
+<div>
+    <input type="text" id="commentWriter" placeholder="작성자">
+    <input type="text" id="commentContents" placeholder="내용">
+    <button id="comment-write-btn" onclick="commentWrite()">댓글작성</button>
+</div>
+
+<div id="comment-list">
+    <table>
+        <tr>
+            <th>댓글번호</th>
+            <th>작성자</th>
+            <th>내용</th>
+            <th>작성시간</th>
+        </tr>
+        <tr th:each="comment: ${commentList}">
+            <td th:text="${comment.id}"></td>
+            <td th:text="${comment.commentWriter}"></td>
+            <td th:text="${comment.commentContents}"></td>
+            <td th:text="${comment.commentCreatedTime}"></td>
+        </tr>
+
+    </table>
+</div>
 </body>
 <script th:inline="javascript">
     const listReq = () => {
@@ -59,7 +85,50 @@
         location.href = `/board/update/[[${board.id}]]`;
     }
     const deleteReq = () => {
-        location.href = `/board/delete/[[${board.id}]`;
+        location.href = `/board/delete/[[${board.id}]]`;
+    }
+
+    const commentWrite = () => {
+        const writer = document.getElementById("commentWriter").value;
+        const contents = document.getElementById("commentContents").value;
+        const boardId = [[${board.id}]];
+
+        $.ajax({
+            type: "post",
+            url: "/comment/save",
+            data: {
+                "commentWriter": writer,
+                "commentContents": contents,
+                "boardId": boardId
+            },
+            dataType: "json",
+            success: function(res) {
+                console.log("작성성공");
+                console.log(res);
+                let output = "<table>";
+                output += "<tr><th>댓글번호</th>";
+                output += "<th>작성자</th>";
+                output += "<th>내용</th>";
+                output += "<th>작성시간</th></tr>";
+                for(let i in res){
+                    output += "<tr>";
+                    output += "<td>"+res[i].id+"</td>";
+                    output += "<td>"+res[i].commentWriter+"</td>";
+                    output += "<td>"+res[i].commentContents+"</td>";
+                    output += "<td>"+res[i].commentCreatedTime+"</td>";
+                    output += "</tr>";
+                }
+                output += "</table>";
+                document.getElementById('comment-list').innerHTML = output;
+                document.getElementById('commentWriter').value='';
+                document.getElementById('commentContents').value='';
+
+            },
+            error: function(err) {
+                console.log("실패");
+            }
+        });
+
     }
 </script>
 </html>
